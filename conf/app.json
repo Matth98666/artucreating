@@ -1,0 +1,20 @@
+{
+  "domain": "www.ArtUCreating.org",
+  "originating_url": "https://www.ArtUCreating.org",
+  "originating_segment": "/",
+  "hmacData": "a1133eb49aa45969a749af7c5ed9311b564fe46e7462f1f076a22e25cd7a6c29d400f4c3e513631afb1879b37ac182fdc3888354da9212f914ae2f3e34dbd8b3",
+  "app_name": "ArtUCreating",
+  "company": "Syradev",
+  "version": "1.3.0",
+  "user_session_name": "ArtUCreatingSession",
+  "session_token_label": "MVCUI_CSRF_TOKEN_SESS_IDX",
+  "form_token_label": "ArtUCreating-csrf-token-label",
+  "hashAlgo": "sha3-512",
+  "cipherAlgo": "aes-256-cbc",
+  "db": {
+    "database": "artucreating",
+    "host": "localhost",
+    "user": "root",
+    "password": "Tetedoeuf98!"
+  }
+}

@@ -1,0 +1,196 @@
+<?php
+
+
+namespace SYRADEV\app;
+
+/**
+ * Classe DemoController étends MvcUIControlller
+ * Gestion de la pagination
+ */
+class DemoController extends MvcUIController
+{
+
+
+    /**
+     * Instance de la classe
+     * @protected MvcUIController|null $instance
+     */
+    protected static ?MvcUIController $instance = null;
+
+
+    /**
+     * Système :
+     * Instantie l'objet DemoController
+     * @return DemoController object *
+     */
+    public static function getInstance(): MvcUIController
+    {
+        if (DemoController::$instance === null) {
+            DemoController::$instance = new DemoController;
+        }
+        return DemoController::$instance;
+    }
+
+
+    /**
+     * Affichage :
+     * Affiche la page de démo de pagination redirigée
+     * @param int $page Le numéro de page demandé
+     * @param int $maxPerPage Le nombre de clients à afficher par page
+     * @return void
+     */
+
+     public function tuto(): void
+     {
+         echo $this->render('Layouts.default', 'Templates.MvcUI.tutos', null, 'Tutos');
+     }
+
+    // public function redirectPaginateDemo(int $page, int $maxPerPage): void
+    // {
+    //     // On se connecte à la database
+    //     /** @var PdoMySQL $cnx */
+    //     $cnx = PdoMySQL::getInstance();
+
+    //     // Récupère le nombre de clients de la table Customers
+    //     $nbClients = $cnx->compteTable('Customers')['nombre'];
+
+    //     // Calcule le nombre de pages de clients
+    //     $nbPages = $nbClients > 0 ? ceil($nbClients / $maxPerPage) : 0;
+
+    //     // Si la page demandée a une valeur supérieure au nombre maximum de pages
+    //     // On affiche la dernièer page
+    //     if($page > $nbPages) {
+    //         $page = $nbPages;
+    //     }
+
+    //     // Calcule la position à requêter en base
+    //     $position = $page === 1 ? 0 : $page * $maxPerPage - $maxPerPage;
+
+    //     // Requête paginée sur les clients en base
+    //     $requeteClients = sprintf('SELECT * from `Customers` ORDER BY `CustomerID` LIMIT %d,%d', $position, $maxPerPage);
+    //     $clients = $cnx->requete($requeteClients);
+
+    //     // Envoie les données des clients au template
+    //     echo $this->render('Layouts.default', 'Templates.Demo.redirectpaginate', ['nbpages'=>$nbPages, 'clients'=>$clients], 'Démo Pagination Redirigée');
+    // }
+
+
+    /**
+     * Affichage :
+     * Affiche la page de démo pagination Ajax
+     * @return void *
+     */
+    // public function ajaxPaginateDemo(): void
+    // {
+    //     echo $this->render('Layouts.default', 'Templates.Demo.clientslistajax', null, 'Démo Pagination Ajax');
+    // }
+
+
+    /**
+     * Affichage :
+     * Affiche une liste de produits
+     * @return void
+     */
+
+    // public function productslist(): void
+    // {
+    //     echo $this->render('Layouts.default', 'Templates.Demo.productlist', null, 'Liste de produits');
+    // }
+
+
+    /**
+     * Utilitaire :
+     * Renvoie la liste paginée des clients
+     * @param int $page Le numéro de page demandé
+     * @param string $routeName Le nom d'une route
+     * @return void
+     */
+    public function clientslist(int $page, string $routeName):void
+    {
+        // On récupère le nombre de clients à afficher par page
+        $elementsPerPage = $_SESSION['mvcRoutes'][$routeName]['elements_per_page'];
+
+        // On se connecte à la database
+        /** @var PdoMySQL $cnx */
+        $cnx = PdoMySQL::getInstance();
+
+        // Récupère le nombre de clients de la table Customers
+        $nbClients = $cnx->compteTable('Customers')['nombre'];
+
+        // Calcule le nombre de pages de clients
+        $nbPages = $nbClients > 0 ? ceil($nbClients / $elementsPerPage) : 0;
+
+        // Calcule la position à requêter en base
+        $position = $page === 1 ? 0 : $page * $elementsPerPage - $elementsPerPage;
+
+        // Requête paginée sur les clients en base
+        $requeteClients = sprintf('SELECT * from `Customers` ORDER BY `CustomerID` LIMIT %d,%d', $position, $elementsPerPage);
+        $clients = $cnx->requete($requeteClients);
+
+        // Envoie les données des clients au partiel
+        echo $this->renderPartial('/Demo/clients', ['nbpages'=>$nbPages, 'clients'=>$clients]);
+    }
+
+
+    /**
+     * Utilitaire :
+     * Sélectionne et envoie les données du défilement infini
+     * @param int $page La page demandée
+     * @param int $maxPerPage Le nombre d'éléments à afficher par page
+     * @return void
+     */
+    public function infinitescroll(int $page, int $maxPerPage): void
+    {
+        // On se connecte à la database
+        $cnx = PdoMySQL::getInstance();
+
+        // Récupère le nombre d'enregistrements de la table produits
+        $nbProduits = $cnx->compteTable('Products')['nombre'];
+
+        // Calcule le nombre de pages de produits
+        $nbPages = $nbProduits > 0 ? ceil($nbProduits / $maxPerPage) : 0;
+
+        // Calcule la position à requêter en base
+        $position = $page === 1 ? 0 : $page * $maxPerPage - $maxPerPage;
+
+        // Requête paginée sur les produits en base
+        $requeteProducts = sprintf('SELECT * from `Products` ORDER BY `ProductID` LIMIT %d,%d', $position, $maxPerPage);
+        $produits = $cnx->requete($requeteProducts);
+
+        // Envoie les données des produits au partiel products
+        echo $this->renderPartial('/Demo/products', $produits);
+    }
+
+    public function tutosDisplay() {
+
+        // On se connecte à la database
+        /** @var PdoMySQL $cnx */
+        $cnx = PdoMySQL::getInstance();
+
+        $sql = 'SELECT * FROM `tuto` ORDER BY `id_tuto`';
+
+        $tuto = $cnx->requete($sql);
+
+
+        echo $this->render('Layouts.default', 'Templates.Demo.tutos', $tuto, 'Tutos');
+    }
+
+    public function videosDisplay() {
+
+        // On se connecte à la database
+        /** @var PdoMySQL $cnx */
+        $cnx = PdoMySQL::getInstance();
+
+        $sql = 'SELECT * FROM `video` ORDER BY `id_creation`';
+
+        $video = $cnx->requete($sql);
+
+        echo $this->render('Layouts.default', 'Templates.Demo.videos', $video, 'Videos');
+    }
+    public function audiosDisplay() {
+        echo $this->render('Layouts.default', 'Templates.Demo.audios', null, 'Audios');
+    }
+    public function vosContenus() {
+        echo $this->render('Layouts.default', 'Templates.Demo.voscontenus', null, 'Vos contenus');
+    }
+}
